@@ -1,0 +1,23 @@
+alert http any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"NII SQL Injection - Paranoid"; flow:to_server,established; http.uri; pcre:"/(\%27)\ (1)|(\-\-)|(%23)|(#)/i"; classtype:web-application-attack; sid:1;)
+
+alert http any any -> any any (msg:"Possible SQL Injection attack (Contains singlequote)"; flow:established,to_server; http.uri; content:"%27"; nocase; sid:2; rev:1;)
+
+alert http any any -> any any (msg:"Possible SQL Injection attack (Contains singlequote)"; flow:established,to_server; http.uri; content:"%'"; nocase; sid:3; rev:1;)
+
+
+alert http any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"Modified regex for detection of SQL meta-characters"; flow:to_server,established; http.uri; pcre:"/(\%3D)|(=)[^\n]*(\%27)|(\')|(\-\-)|(\%3B)|(\\;)/i"; classtype:web-application-attack; sid:6;)
+
+alert http any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"Regex for typical SQL Injection attack"; flow:to_server,established; http.uri; pcre:"/\w*(\%27)|\'((\%6F)|o(\%4F)) ((\%72)|r|(\%52))/i"; classtype:web-application-attack; sid:7;)
+
+alert http any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"Regex for detecting SQL Injection with the UNION keyword"; flow:to_server,established; http.uri; pcre:"/((\%27)|(\'))union/i"; classtype:web-application-attack; sid:8;)
+
+
+alert http any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"Regex for detecting SQL Injection with the UPDATE keyword"; flow:to_server,established; http.uri; pcre:"/((\%27)|(\'))update/i"; classtype:web-application-attack; sid:10;)
+
+alert http any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"Regex for detecting SQL Injection with the INSERT keyword"; flow:to_server,established; http.uri; pcre:"/((\%27)|(\'))insert/i"; classtype:web-application-attack; sid:11;)
+
+alert http any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"Regex for detecting SQL Injection with the DELETE keyword"; flow:to_server,established; http.uri; pcre:"/((\%27)|(\'))delete/i"; classtype:web-application-attack; sid:12;)
+
+alert http any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"Regex for detecting SQL Injection with the DROP keyword"; flow:to_server,established; http.uri; pcre:"/((\%27)|(\'))drop/i"; classtype:web-application-attack; sid:13;)
+
+alert http any any -> $HTTP_SERVERS $HTTP_PORTS (msg:"Regex for detecting SQL Injection attacks on an MS SQL Server"; flow:to_server,established; http.uri; pcre:"/exec(\s\+)+(sx)p\w+/i"; classtype:web-application-attack; sid:14;)

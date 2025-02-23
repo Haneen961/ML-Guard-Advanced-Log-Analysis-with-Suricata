@@ -1,0 +1,24 @@
+alert tcp any any -> any 80 (msg:"Possible SYN Flood"; flags:S; threshold: type threshold, track by_src, count 20, seconds 5; sid:100001;)
+
+alert tcp any any -> $HOME_NET any (msg: "Possible DDoS attack"; flags: S; flow: stateless; threshold: type both, track by_dst, count 200, seconds 5;
+              classtype:denial-of-service; sid:1000001; rev:1;)
+
+
+
+alert tcp any any -> any any (msg:"🚨 Possible SYN-ACK Flood 🚨"; flags:SA; threshold: type both, track by_dst, count 100, seconds 1;
+        classtype:attempted-dos; sid:100002; rev:1;)
+
+
+alert tcp any any -> any any (msg:"🚨 Possible TCP RST Flood 🚨"; flags:R; threshold: type both, track by_src, count 100, seconds 2;
+         classtype:attempted-dos; sid:1000104; rev:1;)
+
+alert tcp any any -> any any (msg:"🚨 Possible TCP FIN Flood 🚨"; flags:F; threshold: type both, track by_src, count 80, seconds 2;
+         classtype:attempted-dos; sid:1000105; rev:1;)
+
+alert tcp any any -> any any (msg:"🚨 TCP Packet with Unusual Flag Combination 🚨"; flags:SF; classtype:attempted-dos; sid:1000106; rev:1;)
+
+alert tcp any any -> any any (msg:"🚨 High Connection Rate - Possible DDoS 🚨"; flow:to_server,established;
+       threshold: type both, track by_src, count 200, seconds 5; classtype:attempted-dos; sid:1000107; rev:1;)
+
+alert tcp any any -> any any (msg:"🚨 General TCP Flood Detected 🚨"; threshold: type both, track by_src, count 500, seconds 1;
+        classtype:attempted-dos; sid:1000109; rev:1;)
